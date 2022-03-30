@@ -8,12 +8,35 @@
     <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
       <v-spacer></v-spacer>
 
+       <!-- <v-btn
+      depressed
+      color="white"
+      class="black--text"
+      @click="toAccount()"
+    >
+    <v-icon color="black" size="30px">mdi-account</v-icon> 회원가입
+       </v-btn> -->
+
       <v-btn
       depressed
       color="white"
       class="black--text"
+      @click="toLogin()"
+      v-if="!isAuthenticated"
     >
-      로그인
+    <v-icon color="black" size="30px" >mdi-login</v-icon> 로그인
+      
+    </v-btn>
+
+      <v-btn
+      v-else
+      depressed
+      color="white"
+      class="black--text"
+      @click="logOut()"
+    >
+    <v-icon color="black" size="30px">mdi-logout</v-icon> 로그아웃
+      
     </v-btn>
     
   </v-app-bar>
@@ -57,6 +80,7 @@
   </div>
 </template>
 <script>
+import { mapGetters } from "vuex"
 export default {
   name: 'mainPage',
  
@@ -68,8 +92,12 @@ export default {
       drawer: null,
         items: [
           { title: '홈', icon: 'mdi-home' , route : '/' },
-          { title: 'About', icon: 'mdi-forum' ,route : '/about'},
+           { title: '회원관리', icon: 'mdi-account' , route : '/main' },
+          { title: '관리자 승인', icon: 'mdi-forum' ,route : '/about'},
         ],
+
+      
+
     }
   },
 
@@ -77,21 +105,40 @@ export default {
   created() {
     
   },
+   computed: {
+      ...mapGetters(["isAuthenticated"]),
+    },
+
   mounted() {
    //this.getUserInfo()
   },
   methods: {
-   getUserInfo(){
-     this.$axios.get("http://api-ccw.com/pro/auth/userinfo",{
-       params : {pro_pid : 14}
-     }).then((res)=>{
-       console.log(res)
-       this.userInfo = res.data.proUserInfo
-       
-     }).catch((err)=>{
-       console.log(err)
-     })
-   }
+    logOut(){
+      console.log("눌림")
+      this.$store
+        .dispatch("logout")
+        .then((response) => {
+          console.log(response)
+          
+            this.$router.push({
+              name: "login",
+            });
+          
+        })
+        .catch(({ message }) => alert(message));
+    },
+    toAccount(){
+      this.$router.push({name :'signup' })
+    },
+    toLogin(){
+      this.$router.push({name :'login' })
+    },
+  //  getUserInfo(){
+  //    this.isAuthenticated = this.$store.getters["isAuthenticated"]
+  //     this.token = this.$store.getters["token"]
+
+      
+  //  }
 
 
 
